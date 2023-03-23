@@ -1,23 +1,30 @@
 import Head from "next/head";
 import styles from "@/styles/Home.module.css";
 import Card from "@/components/Card";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import defaultProducts from "@/utils/products";
 
 export type CardProps = {
-  id: string;
-  // title: string;
+  title: string;
   price: number;
   imageURI: string;
   quantity: number;
 };
 
-const defaultTitle = "Tourmaline & Argan Oil Bar Soap";
+export type productType = {
+  [key: string]: CardProps;
+};
 
 export default function Home() {
-  const [products, setProducts] = useState<CardProps[]>(defaultProducts);
-  const [inputTitle, setInputTitle] = useState(defaultTitle);
+  const [products, setProducts] = useState<productType>(defaultProducts);
+  const [onSelected, setOnSelected] = useState<string | null>(null);
   const [fontSize, setFontSize] = useState(20);
+
+  // useEffect(() => {
+  //   if (onSelected) {
+  //     setInputTitle(products[onSelected]?.title || "");
+  //   }
+  // }, [onSelected]);
 
   return (
     <>
@@ -32,9 +39,19 @@ export default function Home() {
           <div>
             <p>Titulo</p>
             <input
-              value={inputTitle}
+              value={onSelected ? products[onSelected]?.title : ""}
               className={styles.inputTitle}
-              onChange={(e) => setInputTitle(e.target.value)}
+              disabled={!onSelected}
+              onChange={(e) => {
+                if (!onSelected) return;
+                setProducts((prev) => ({
+                  ...prev,
+                  [onSelected || ""]: {
+                    ...prev[onSelected || ""],
+                    title: e.target.value,
+                  },
+                }));
+              }}
             />
           </div>
           <div>
@@ -50,18 +67,27 @@ export default function Home() {
         </div>
 
         <div className={styles.cardContainer}>
-          {products.map((product, index) => (
-            <Card
-              key={index}
-              {...{ setProducts, fontSize, ...product }}
-              title={inputTitle}
-            />
-          ))}
+          {Object.entries(products).map(([id, product], index) => {
+            return (
+              <Card
+                key={index}
+                {...product}
+                setProducts={setProducts}
+                fontSize={fontSize}
+                id={id}
+                onSelected={onSelected}
+                setOnSelected={setOnSelected}
+              />
+            );
+          })}
         </div>
 
         <h1 className={styles.total}>
           Total cantidad:{" "}
-          {products.reduce((acc, product) => acc + (product.quantity || 0), 0)}
+          {Object.entries(products).reduce(
+            (acc, [id, product]) => acc + (product.quantity || 0),
+            0
+          )}
         </h1>
       </main>
     </>

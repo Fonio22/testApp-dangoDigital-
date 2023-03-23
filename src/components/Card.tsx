@@ -1,33 +1,60 @@
 import Image from "next/image";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styles from "./Card.module.css";
 import Link from "next/link";
-import { CardProps } from "@/pages";
+import { CardProps, productType } from "@/pages";
 
 type Props = CardProps & {
-  title: string;
+  id: string;
   fontSize: number;
-  setProducts: React.Dispatch<React.SetStateAction<CardProps[]>>;
+  setProducts: React.Dispatch<React.SetStateAction<productType>>;
+  onSelected: string | null;
+  setOnSelected: React.Dispatch<React.SetStateAction<string | null>>;
 };
 
 export default function Card(props: Props) {
-  const { id, title, price, imageURI, quantity, setProducts, fontSize } = props;
+  const {
+    id,
+    title,
+    price,
+    imageURI,
+    quantity,
+    setProducts,
+    fontSize,
+    onSelected,
+    setOnSelected,
+  } = props;
+
+  const [screenSize, getDimension] = useState({
+    dynamicWidth: window.innerWidth,
+    dynamicHeight: window.innerHeight,
+  });
+
+  const setDimension = () => {
+    getDimension({
+      dynamicWidth: window.innerWidth,
+      dynamicHeight: window.innerHeight,
+    });
+  };
+
+  useEffect(() => {
+    window.addEventListener("resize", setDimension);
+
+    return () => {
+      window.removeEventListener("resize", setDimension);
+    };
+  }, [screenSize]);
 
   const onChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    //Metodo sencillo, en este caso funciona, pero no es la mejor forma de hacerlo
-    //ya que si tuvieramos mas de 100 productos, esto seria muy ineficiente
-    //Otro caso para hacerlo es separar el estado de input aparte y luego usar un useEffect para actualizar el estado de products (Metodo eficiente)
-
-    setProducts((prev) =>
-      prev.map((product) =>
-        product.id === id
-          ? {
-              ...product,
-              quantity: parseInt(e.target.value),
-            }
-          : product
-      )
-    );
+    const { value } = e.target;
+    const newQuantity = parseInt(value);
+    setProducts((prev) => ({
+      ...prev,
+      [id]: {
+        ...prev[id],
+        quantity: newQuantity,
+      },
+    }));
   };
 
   return (
@@ -46,7 +73,10 @@ export default function Card(props: Props) {
           className={styles.titleProduct}
           style={{
             fontSize: `${fontSize}px`,
+            color: onSelected === id ? "red" : "black",
+            maxWidth: `${screenSize.dynamicWidth - 60}px`,
           }}
+          onClick={() => setOnSelected(id)}
         >
           {title}
         </h3>

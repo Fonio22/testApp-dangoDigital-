@@ -26,6 +26,7 @@
     white-space: normal;
     overflow: hidden;
     text-overflow: ellipsis;
+    cursor: pointer;
 }
 
 .inputPriceContainer{
