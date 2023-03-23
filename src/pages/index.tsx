@@ -20,12 +20,6 @@ export default function Home() {
   const [onSelected, setOnSelected] = useState<string | null>(null);
   const [fontSize, setFontSize] = useState(20);
 
-  // useEffect(() => {
-  //   if (onSelected) {
-  //     setInputTitle(products[onSelected]?.title || "");
-  //   }
-  // }, [onSelected]);
-
   return (
     <>
       <Head>

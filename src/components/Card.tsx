@@ -26,8 +26,8 @@ export default function Card(props: Props) {
   } = props;
 
   const [screenSize, getDimension] = useState({
-    dynamicWidth: window.innerWidth,
-    dynamicHeight: window.innerHeight,
+    dynamicWidth: 0,
+    dynamicHeight: 0,
   });
 
   const setDimension = () => {
@@ -74,7 +74,7 @@ export default function Card(props: Props) {
           style={{
             fontSize: `${fontSize}px`,
             color: onSelected === id ? "red" : "black",
-            maxWidth: `${screenSize.dynamicWidth - 60}px`,
+            maxWidth: `${screenSize.dynamicWidth - 75}px`,
           }}
           onClick={() => setOnSelected(id)}
         >

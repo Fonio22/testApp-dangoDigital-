@@ -38,9 +38,16 @@
 }
 
 @media only screen and (max-width: 580px){
+  .topContainer{
+    flex-direction: column;
+    align-items: flex-start;
+    margin: 10px;
+  }
   .cardContainer{
     margin: 0 10px
   }
-
+  .inputTitle{
+    max-width: 100vw;
+  }
 }
 
